@@ -19,7 +19,7 @@
 
             ],
             "jinja": true,
-            "autoStartBrowser": false
+            "autoStartBrowser": true
         }
     ]
 }
