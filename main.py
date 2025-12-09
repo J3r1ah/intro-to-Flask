@@ -1,8 +1,36 @@
-from flask import Flask
+from flask import Flask, render_template
+import pymysql
+from dynaconf import Dynaconf
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return "hello world"
+config = Dynaconf(settings_files=["settings.toml"])
+
+def connect_db():
+    conn = pymysql.connect(
+    host = "db.steamcenter.tech",
+    user = "joliverasfair",
+    password = config.password,
+    database = "",
+    autocommit = True,
+    cursorclass = pymysql.cursors.DictCursor
+    )
+    return conn
+
+@app.route("/")
+def home():
+    return render_template("homepage.html.jinja")
+
+@app.route("/browse")
+def browse():
+    connection = connect_db()
+
+    cursor = connection.cursor
+
+    cursor.execute("SELECT * FROM `Product`")
+    
+    connection.close()
+    return render_template("browser.html.jinja")
+
+
 
