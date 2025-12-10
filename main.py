@@ -11,7 +11,7 @@ def connect_db():
     host = "db.steamcenter.tech",
     user = "joliverasfair",
     password = config.password,
-    database = "",
+    database = "joliverasfair_chef_riah_premuim",
     autocommit = True,
     cursorclass = pymysql.cursors.DictCursor
     )
@@ -33,6 +33,9 @@ def browse():
     
     connection.close()
     return render_template("browser.html.jinja")
+
+
+
 
 
 
