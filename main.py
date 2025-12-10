@@ -28,6 +28,8 @@ def browse():
     cursor = connection.cursor
 
     cursor.execute("SELECT * FROM `Product`")
+
+    result = cursor.fetchall()
     
     connection.close()
     return render_template("browser.html.jinja")
