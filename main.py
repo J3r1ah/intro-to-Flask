@@ -63,20 +63,49 @@ def register():
 
             address = request.form["address"]
 
-        if password != confirm_password:
-            flash("Passwords do not match!")
-        elif len(password) < 8:
-            flash("Password must be at least 8 characters long!")
-            flash("password is too short")
-        else:
-            connection = connect_db()
+            if password != confirm_password:
+                flash("Passwords do not match!")
+            elif len(password) < 8:
+                flash("Password must be at least 8 characters long!")
+                flash("password is too short")
+                
+            else:
+                connection = connect_db()
 
-            cursor = connection.cursor()
-
-            cursor.execute("""INSERT INTO `User` (`Name`, `Email`, `Password`, `Address`)  \
-            VALUES (%s, %s, %s, %s)
+                cursor = connection.cursor()
+            try:
+                cursor.execute("""
+                INSERT INTO `User` (`Name`, `Email`, `Password`, `Address`)  \
+                VALUES (%s, %s, %s, %s)
             """, (name, email, password, address))
-        return "redirect('/login")"
-    
+            except pymysql.err.IntegrityError:
+                flash("Email already registered!")
+                connection.close()
+            else:
+                return redirect('/login')
+        
         return render_template("register.html.jinja")
 
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+
+        password = request.form["password"]
+
+        connection = connect_db()
+
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT * FROM `User` WHERE `Email` = %s
+        """, (email))
+
+        result = cursor.fetchone()
+
+        connection.close()
+
+        if result is None:
+            flash("No user found with that email!")
+            
+    return render_template("login.html.jinja")
